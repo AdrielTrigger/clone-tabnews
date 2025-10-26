@@ -9,7 +9,7 @@
     "lint:fix": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "container": "docker compose -f infra/composer.yaml up"
+    "container": "docker compose -f infra/compose.yaml up -d"
   },
   "author": "",
   "license": "MIT",
@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/pg": "^8.15.5",
     "jest": "^29.6.2",
     "prettier": "^3.4.1"
   }
