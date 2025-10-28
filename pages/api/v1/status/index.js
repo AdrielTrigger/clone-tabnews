@@ -1,11 +1,32 @@
 import database from "infra/database.js";
 
 async function status(request, response) {
-  const result = await database.query("SELECT 1 + 1 as sum;");
-  console.log(result.rows);
+  const updatedAt = new Date().toISOString();
+
+  const dbVerResult = await database.query("SHOW server_version;");
+  const dbVerValue = dbVerResult.rows[0].server_version;
+
+  const dbMaxConnectionsResult = await database.query("SHOW max_connections;");
+  const dbMaxConnectionsValue = dbMaxConnectionsResult.rows[0].max_connections;
+
+  const dbName = process.env.POSTGRES_DB;
+  const dbOpenedConnectionsResult = await database.query({
+    text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
+    values: [dbName],
+  });
+  const dbOpenedConnectionsValue = dbOpenedConnectionsResult.rows[0].count;
+
+  console.log(`Active connections: ${dbOpenedConnectionsValue}`);
+
   response.status(200).json({
-    chave:
-      "se estiver lendo isso, é porque você conseguiu fazer a página de status da api funcionar",
+    updated_at: updatedAt,
+    dependencies: {
+      database: {
+        version: dbVerValue,
+        max_connections: parseInt(dbMaxConnectionsValue),
+        opened_connections: dbOpenedConnectionsValue,
+      },
+    },
   });
 }
 
