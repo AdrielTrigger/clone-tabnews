@@ -16,7 +16,7 @@ async function status(request, response) {
   });
   const dbOpenedConnectionsValue = dbOpenedConnectionsResult.rows[0].count;
 
-  console.log(`Conexões ativas: ${dbOpenedConnectionsValue}`);
+  console.log(`Active connections: ${dbOpenedConnectionsValue}`);
 
   response.status(200).json({
     updated_at: updatedAt,
