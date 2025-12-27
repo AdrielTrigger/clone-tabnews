@@ -9,7 +9,7 @@ export default async function status(request, response) {
       error: `${request.method} is an invalid method.`,
     });
   }
-  
+
   let dbClient;
 
   try {
@@ -21,7 +21,7 @@ export default async function status(request, response) {
       direction: "up",
       verbose: true,
       migrationsTable: "pgmigrations",
-    }
+    };
 
     if (request.method === "GET") {
       const pendingMigrations = await migrationRunner(defaultMigrationOptions);
@@ -30,20 +30,19 @@ export default async function status(request, response) {
 
     if (request.method === "POST") {
       const migratedMigrations = await migrationRunner({
-      ...defaultMigrationOptions,
-      dryRun: false,
-    });
-    
-    if (migratedMigrations.length > 0) {
-      return response.status(201).json(migratedMigrations);
+        ...defaultMigrationOptions,
+        dryRun: false,
+      });
+
+      if (migratedMigrations.length > 0) {
+        return response.status(201).json(migratedMigrations);
       } else {
         return response.status(200).json(migratedMigrations);
       }
     }
-  } catch(error) {
-      throw(error);
+  } catch (error) {
+    throw error;
   } finally {
     await dbClient.end();
   }
 }
-
