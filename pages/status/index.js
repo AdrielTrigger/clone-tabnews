@@ -11,7 +11,7 @@ export default function StatusPage() {
     <>
       <h1>Status</h1>
       <UpdatedAt />
-      <DatabaseVersion />
+      <DatabaseStatus />
     </>
   );
 }
@@ -30,7 +30,7 @@ function UpdatedAt() {
   return <div>Last update: {updatedAtText}</div>;
 }
 
-function DatabaseVersion() {
+function DatabaseStatus() {
   const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
     refreshInterval: 2000,
   });
@@ -38,17 +38,26 @@ function DatabaseVersion() {
   let databaseVersionText = "Loading...";
   let maxConnText = "Loading...";
   let openConnText = "Loading...";
+  let databaseStatusInfo;
 
   if (!isLoading && data) {
     databaseVersionText = data.dependencies.database.version;
     maxConnText = data.dependencies.database.max_connections;
     openConnText = data.dependencies.database.opened_connections;
+
+    databaseStatusInfo = (
+      <>
+        <div>Version: {databaseVersionText}</div>
+        <div>Opened Connections: {openConnText}</div>
+        <div>Maximum Connections: {maxConnText}</div>
+      </>
+    );
   }
 
   return (
-    <div>
-      Database version: {databaseVersionText}, Maximum connections:{" "}
-      {maxConnText}, Opened connections: {openConnText}
-    </div>
+    <>
+      <h2>Database Info</h2>
+      <div>{databaseStatusInfo}</div>
+    </>
   );
 }
